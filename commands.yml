@@ -1,0 +1,11 @@
+Move files:
+  - Sysadmin
+  - mv *
+Search in files and show context:
+  - Search
+  - find . -iname 'FILETYPE' | xargs grep --color=auto -i -b1 -a1 'STRING'
+  - String to search for: STRING
+  - In what files (*): FILETYPE
+Restart apache:
+  - Apache
+  - sudo /etc/init.d/apache2 restart

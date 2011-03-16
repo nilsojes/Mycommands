@@ -1,0 +1,119 @@
+#!/usr/bin/ruby
+require 'rubygems'
+require 'clipboard'
+#require 'highline'
+require 'ruby-debug'
+require 'yaml'
+require 'readline'
+#include HighLine::SystemExtensions
+class Array
+  def mget indexes
+    begin
+      result = self
+  #    puts result.inspect
+      for i in indexes
+        result = result[i].collect { |item| item.to_a unless item.nil? }
+      end
+      result
+    rescue
+      false
+    end
+  end
+end
+
+class Application
+  def self.run controller = 'Category',  state = nil
+    eval(controller + 'Controller').new.browse state
+  end
+end
+
+class Controller
+  attr_accessor :model, :view
+  def initialize
+    name = self.class.to_s.gsub('Controller', '')
+    @model = eval(name+'Model').new
+    @view = eval(name+'View').new
+  end
+  def get_input
+    while line = Readline.readline('> ', true)
+      handle_input line
+    end
+  end
+end
+
+class CategoryController < Controller
+  attr_accessor :categories
+  def browse state = nil
+    @categories = @model.categories
+    @view.display(@categories)
+    get_input
+  end
+
+  def handle_input choice
+    choice = choice.to_i - 1
+    @model.set_state = choice
+    if @model.categories
+      browse
+    else
+      Application::run 'Command', @model.current_category
+    end
+  end
+end
+
+class CommandController < Controller
+  def browse state
+    puts state
+  end
+  def input
+    while line = Readline.readline('> ', true)
+      puts line
+    end
+  end
+end
+
+class CategoryModel
+  attr_accessor :all_categories, :state
+  def initialize
+    @state = []
+    @all_categories = YAML::load(File.open('/home/nils/dev/mycommands/categories.yml')).sort
+  end
+
+  def categories
+    return @all_categories if @state.empty?
+    categories = @all_categories.mget @state
+#    puts categories.inspect
+    categories = categories.drop(1)[0]
+    puts categories.inspect
+    categories
+  end
+
+  def current_category
+    categories = @all_categories.mget @state
+    categories[0]
+  end
+
+  def set_state= state
+    @state.push(state)
+  end
+end
+
+class CommandModel
+  attr_accessor :yml
+  def initialize
+    @yml |= YAML::load(File.open('/home/nils/dev/mycommands/commands.yml'))
+  end
+
+end
+
+class CategoryView
+  def display categories
+    categories.each_with_index do |(key, value), index|
+      puts "#{index+1} - #{key}"
+    end
+  end
+end
+class CommandView < CategoryView
+
+end
+
+Application::run

@@ -4,24 +4,36 @@ require 'clipboard'
 require 'ruby-debug'
 require 'yaml'
 require 'readline'
-class Array
-  def mget indexes
-    begin
-      result = self
-  #    puts result.inspect
-      for i in indexes
-        result = result[i].collect { |item| item.to_a unless item.nil? }
-      end
-      result
-    rescue
-      false
+class Factory
+  @@objects = []
+  def self.get _class
+#    _class.capitalize!
+    for object in @@objects
+      return object if object.class == eval(_class)
     end
+    object = eval(_class).new
+    @@objects.push object
+    object
   end
 end
 
 class Application
-  def self.run controller = 'Category',  state = nil
-    eval(controller + 'Controller').new.browse state
+  @controller = 'Category'
+  @action = 'browse'
+  def run controller = 'Category', action = 'browse'
+    Factory::get(controller + 'Controller').send action
+    get_input
+  end
+
+  def method_missing m, *args
+    @controller, @action = m.to_s.split('_').drop(2)
+
+  end
+
+  def get_input
+    while line = Readline.readline('> ', true)
+      Factory::get(@controller+'Controller').send @action, line
+    end
   end
 end
 
@@ -29,89 +41,100 @@ class Controller
   attr_accessor :model, :view
   def initialize
     name = self.class.to_s.gsub('Controller', '')
-    @model = eval(name+'Model').new
-    @view = eval(name+'View').new
-  end
-  def get_input
-    while line = Readline.readline('> ', true)
-      handle_input line
-    end
+    @model = Factory::get(name+'Model')
+    @view = Factory::get(name+'View')
   end
 end
 
 class CategoryController < Controller
-  attr_accessor :categories
-  def browse state = nil
-    @categories = @model.categories
-    @view.display(@categories)
-    get_input
-  end
-
-  def handle_input choice
-    choice = choice.to_i - 1
-    @model.set_state = choice
-    if @model.categories
-      browse
-    else
-      Application::run 'Command', @model.current_category
+  def browse choice = nil
+    unless choice.nil?
+      choice = choice.to_i - 1
+      @model.choices.push choice
     end
+    begin
+      categories = @model.categories
+    rescue
+      Factory::get('Application').run 'Command'
+    end
+    @view.display_list(categories)
+    Factory::get('Application').input_to_Category_browse
   end
 end
 
 class CommandController < Controller
-  def browse state
-    puts state
+  def browse
+    category_model = Factory::get('CategoryModel')
+    @model.category = category_model.choices.last
+    @view.display_list(@model.commands)
+    Factory::get('Application').input_to_Command_read
   end
-  def input
-    while line = Readline.readline('> ', true)
-      puts line
-    end
+
+  def read choice
+    command = @model.command
+    Clipboard.copy command
+    @view.display_item(command)
+
+  end
+
+  def handle_input choice
+    choice = choice.to_i - 1
+    @model.choice= choice
+    read
   end
 end
 
 class CategoryModel
-  attr_accessor :all_categories, :state
+  attr_accessor :all_categories, :choices
   def initialize
-    @state = []
-    @all_categories = YAML::load(File.open('/home/nils/dev/mycommands/categories.yml')).sort
+    @choices = []
+    @all_categories = YAML::load(File.open('/home/nils/dev/mycommands/categories.yml'))
   end
 
   def categories
-    return @all_categories if @state.empty?
-    categories = @all_categories.mget @state
-#    puts categories.inspect
-    categories = categories.drop(1)[0]
-    puts categories.inspect
-    categories
+    if @choices.empty?
+      @categories = @all_categories
+    else
+      convert_choice
+      @categories = @all_categories
+#      debugger
+      for choice in @choices
+        @categories = @categories[choice]
+      end
+    end
+    @categories = @categories.sort.map {|i| i = i[0]}
   end
 
-  def current_category
-    categories = @all_categories.mget @state
-    categories[0]
-  end
-
-  def set_state= state
-    @state.push(state)
+  def convert_choice
+#    debugger
+    choice = @categories[@choices.last.to_i]
+    @choices.pop
+    @choices = @choices.push choice
   end
 end
 
 class CommandModel
-  attr_accessor :yml
+  attr_accessor :all_commands, :category, :choice
   def initialize
-    @yml |= YAML::load(File.open('/home/nils/dev/mycommands/commands.yml'))
+    @all_commands = YAML::load(File.open('/home/nils/dev/mycommands/commands.yml'))
   end
 
+  def commands
+#    debugger
+    @all_commands.to_a.select {|c| c[1][0] == @category}
+  end
 end
 
 class CategoryView
-  def display categories
+  def display_list categories
     categories.each_with_index do |(key, value), index|
       puts "#{index+1} - #{key}"
     end
   end
 end
 class CommandView < CategoryView
-
+  def display_item
+    
+  end
 end
-
-Application::run
+Factory::get('Application').run

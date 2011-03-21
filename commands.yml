@@ -1,11 +1,59 @@
-Move files:
-  - Sysadmin
-  - mv *
 Search in files and show context:
   - Search
   - find . -iname 'FILETYPE' | xargs grep --color=auto -i -b1 -a1 'STRING'
   - String to search for: STRING
   - In what files (*): FILETYPE
+Find in files and list files:
+  - Search
+  - find . -iname 'FILETYPE' | xargs grep 'STRING' -sl
+  - String to search for: STRING
+  - In what files (*): FILETYPE
+Delete specific files in cwd recursive:
+  - Files
+  - find . -name \FILES -CONFIRM rm {} \;
+  - Files to remove (*.svn): FILES
+  - Confirm exec/ok (ok): CONFIRM
+Remove broken links:
+  - Files
+  - find -L . -type l -delete
+List the size of sub folders:
+  - Files
+  - du -h --max-depth=1
+Graphical tree of sub-directories:
+  - Files
+  - ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
+Downsize images and crop to a certain size:
+  - Images
+  - mogrify -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0"
+  - Width: WIDTH
+  - Height: HEIGHT
+Downsize images and crop to a certain size and put in a sub directory:
+  - Images
+  - mkdir DIR && mogrify -path DIR -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0"
+  - Width: WIDTH
+  - Height: HEIGHT
+  - Directory: DIR
+Display linux release:
+  - Sysadmin
+  - cat /etc/lsb-release
 Restart apache:
-  - Apache
+  - Sysadmin
   - sudo /etc/init.d/apache2 restart
+Add existing user to existing group:
+  - Sysadmin
+  - sudo usermod -a -G GROUP USER
+  - Group: GROUP
+  - User: USER
+Start webbserver in cwd:
+  - Misc
+  - python -m SimpleHTTPServer
+Reset git working tree:
+  - Misc
+  - git reset --hard HEAD
+Tar exclude example:
+  - Tar
+  - tar --exclude="upprop*" --exclude="cache/*" -czvf ../backup_html_20010313.tgz .
+Tar exclude:
+  - Tar
+  - tar --exclude="EXCLUDE" -czvf
+  - What to exclude: EXCLUDE

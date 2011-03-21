@@ -1,13 +1,16 @@
 #!/usr/bin/ruby
+path = '/home/nils/dev/mycommands/'
 require 'rubygems'
 require 'clipboard'
 require 'ruby-debug'
 require 'yaml'
 require 'readline'
+require "#{path}controllers.rb"
+require "#{path}models.rb"
+require "#{path}views.rb"
 class Factory
   @@objects = []
   def self.get _class
-#    _class.capitalize!
     for object in @@objects
       return object if object.class == eval(_class)
     end
@@ -18,123 +21,58 @@ class Factory
 end
 
 class Application
-  @controller = 'Category'
-  @action = 'browse'
-  def run controller = 'Category', action = 'browse'
-    Factory::get(controller + 'Controller').send action
+  attr_accessor :history, :controller, :action, :go_back
+  def initialize
+    @history = Factory::get('HistoryModel')
+    @controller = 'Category'
+    @action = 'browse'
+  end
+  def run
+    dispatch @controller, @action
     get_input
   end
 
-  def method_missing m, *args
-    @controller, @action = m.to_s.split('_').drop(2)
-
+  def input_to controller, action
+    @controller = controller
+    @action = action
   end
 
   def get_input
-    while line = Readline.readline('> ', true)
-      Factory::get(@controller+'Controller').send @action, line
+    while input = Readline.readline('> ', true)
+      check_input input
+      dispatch @controller, @action, input unless @go_back
     end
   end
-end
 
-class Controller
-  attr_accessor :model, :view
-  def initialize
-    name = self.class.to_s.gsub('Controller', '')
-    @model = Factory::get(name+'Model')
-    @view = Factory::get(name+'View')
-  end
-end
-
-class CategoryController < Controller
-  def browse choice = nil
-    unless choice.nil?
-      choice = choice.to_i - 1
-      @model.choices.push choice
-    end
-    begin
-      categories = @model.categories
-    rescue
-      Factory::get('Application').run 'Command'
-    end
-    @view.display_list(categories)
-    Factory::get('Application').input_to_Category_browse
-  end
-end
-
-class CommandController < Controller
-  def browse
-    category_model = Factory::get('CategoryModel')
-    @model.category = category_model.choices.last
-    @view.display_list(@model.commands)
-    Factory::get('Application').input_to_Command_read
-  end
-
-  def read choice
-    command = @model.command
-    Clipboard.copy command
-    @view.display_item(command)
-
-  end
-
-  def handle_input choice
-    choice = choice.to_i - 1
-    @model.choice= choice
-    read
-  end
-end
-
-class CategoryModel
-  attr_accessor :all_categories, :choices
-  def initialize
-    @choices = []
-    @all_categories = YAML::load(File.open('/home/nils/dev/mycommands/categories.yml'))
-  end
-
-  def categories
-    if @choices.empty?
-      @categories = @all_categories
-    else
-      convert_choice
-      @categories = @all_categories
+  def check_input input
+    @go_back = false
+    case input
+    when '0'
+      puts 'check'
 #      debugger
-      for choice in @choices
-        @categories = @categories[choice]
-      end
-    end
-    @categories = @categories.sort.map {|i| i = i[0]}
-  end
-
-  def convert_choice
-#    debugger
-    choice = @categories[@choices.last.to_i]
-    @choices.pop
-    @choices = @choices.push choice
-  end
-end
-
-class CommandModel
-  attr_accessor :all_commands, :category, :choice
-  def initialize
-    @all_commands = YAML::load(File.open('/home/nils/dev/mycommands/commands.yml'))
-  end
-
-  def commands
-#    debugger
-    @all_commands.to_a.select {|c| c[1][0] == @category}
-  end
-end
-
-class CategoryView
-  def display_list categories
-    categories.each_with_index do |(key, value), index|
-      puts "#{index+1} - #{key}"
+      @history.back
+#      puts history.inspect
+      @controller, @action, input = @history.history.last
+#      debugger
+      input_to @controller, @action
+      @go_back = true
+      dispatch @controller, @action, input
     end
   end
-end
-class CommandView < CategoryView
-  def display_item
-    
+
+  def dispatch controller, action, input = nil
+#    @history.add(controller, action, input)
+#    debugger
+    puts "dispatching #{controller}, #{action}, #{input}"
+    @history.add(controller, action, input) unless @go_back
+    if input.nil?
+#      puts controller+action
+      Factory::get(controller+'Controller').send action
+    else
+      Factory::get(controller+'Controller').send action, input
+    end
+#    puts @history.history.inspect
   end
 end
+
 Factory::get('Application').run

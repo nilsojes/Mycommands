@@ -16,7 +16,8 @@ class CategoryView < View
     list categories
   end
 end
-class CommandView < CategoryView
+
+class CommandView < View
   def display_list commands
     header :Commands
     list commands
@@ -24,5 +25,11 @@ class CommandView < CategoryView
 
   def display_item
 
+  end
+end
+
+class ParamView < View
+  def display_item param
+    puts "#{param}?"
   end
 end

@@ -9,9 +9,11 @@ class HistoryModel
   end
 
   def back
-    puts "History before pop #{@history.inspect}"
-    @history.pop
-    puts "History after pop #{@history.inspect}"
+    if @history.last[0] == 'Command'
+      @history.pop(2)
+    else
+      @history.pop
+    end
   end
 
   def category_choices
@@ -20,52 +22,73 @@ class HistoryModel
 end
 
 class CategoryModel
-  attr_accessor :all_categories, :choices
+  attr_accessor :all_categories
   def initialize
-    @choices = []
     @all_categories = YAML::load(File.open('/home/nils/dev/mycommands/categories.yml'))
   end
 
   def categories
-#    debugger
-    if @choices.empty?
+    choices = Factory::get('HistoryModel').category_choices
+    if choices.empty?
       @categories = @all_categories
     else
-#      convert_choice
       @categories = @all_categories
-      choices = Factory::get('HistoryModel').category_choices
-      puts Factory::get('HistoryModel').history.inspect
-      puts choices.inspect
       for choice in choices
         @categories = @categories.sort[choice][1]
       end
-        puts @categories.inspect
     end
-    @categories = @categories.sort.map {|i| i = i[0]}
-#    @categories
+    if @categories
+      @categories = @categories.sort.map {|i| i = i[0]}
+    else
+      false
+    end
   end
 
-  def convert_choice
-    if @choices.last.class == Fixnum
-      choice = @categories[@choices.last]
-      @choices.pop
-      @choices = @choices.push choice
+  def last_category
+    choices = Factory::get('HistoryModel').category_choices
+    last_choice = choices.pop
+    @categories = @all_categories
+    if choices.empty?
+      category = @categories.sort[last_choice][0]
+    else
+      for choice in choices
+        @categories = @categories.sort[choice][1]
+      end
+      category = @categories.to_a[last_choice][0]
     end
+    category
   end
 end
 
 class CommandModel
-  attr_accessor :all_commands, :commands, :category, :choice
+  attr_accessor :all_commands, :commands, :category, :command, :params
   def initialize
     @all_commands = YAML::load(File.open('/home/nils/dev/mycommands/commands.yml'))
   end
 
   def commands
-#    debugger
     @commands = @all_commands.to_a.select {|c| c[1][0] == @category}
   end
 
-  def command choice
-    @command = @commands[choice]
+  def command choice = nil
+    if choice.nil?
+      @command
+    else
+      @command = @commands[choice]
+    end
+  end
+end
+
+class ParamModel
+  attr_accessor :params, :param, :substituted_params
+  def initialize
+    command = Factory::get('CommandModel').command
+    @params = command[1][2, 100].reverse
+    @substituted_params = []
+  end
+
+  def params_pop
+    @param = @params.pop
+    @param
   end
 end

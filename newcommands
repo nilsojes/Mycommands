@@ -48,12 +48,8 @@ class Application
     @go_back = false
     case input
     when '0'
-      puts 'check'
-#      debugger
       @history.back
-#      puts history.inspect
       @controller, @action, input = @history.history.last
-#      debugger
       input_to @controller, @action
       @go_back = true
       dispatch @controller, @action, input
@@ -61,17 +57,13 @@ class Application
   end
 
   def dispatch controller, action, input = nil
-#    @history.add(controller, action, input)
-#    debugger
-    puts "dispatching #{controller}, #{action}, #{input}"
+#    puts "dispatching #{controller}, #{action}, #{input}"
     @history.add(controller, action, input) unless @go_back
     if input.nil?
-#      puts controller+action
       Factory::get(controller+'Controller').send action
     else
       Factory::get(controller+'Controller').send action, input
     end
-#    puts @history.history.inspect
   end
 end
 

@@ -11,49 +11,58 @@ end
 
 class CategoryController < Controller
   def browse category = nil
-
-    if category.class == Array
-      @model.choices = category
-#    debugger
-    elsif  category.class == String
-      choice = category.to_i - 1
-      @model.choices.push choice
-#    elsif choice == 0
-#      @model.choices.pop
-    end
-#    begin
-      #puts 'fetching categories'
-#      debugger
       categories = @model.categories
-#      @history.add('Category', 'browse', @model.choices)
-      @view.display_list(categories)
-      @application.input_to 'Category', 'browse'
-#    rescue
-#      puts 'going to commands'
-#      @application.dispatch('Command', 'browse', @model.choices.last)
-#    end
+      if categories
+        @view.display_list(categories)
+        @application.input_to 'Category', 'browse'
+      else
+        puts @history.category_choices.inspect
+        @application.dispatch('Command', 'browse', @model.last_category)
+      end
   end
 end
 
 class CommandController < Controller
   def browse category
-#    category_model = Factory::get('CategoryModel')
     @model.category = category
     @view.display_list(@model.commands)
-#    puts Factory::get('HistoryModel').history.inspect
-    @history.add('Command', 'browse', category)
     @application.input_to 'Command', 'read'
   end
 
   def read choice
     command = @model.command(choice.to_i-1)
-#    puts command.inspect
-    params = command[1,100]
-    puts params.inspect
-#    Clipboard.copy command
-#    @view.display_params(params)
-#    @view.display_item(command)
+    @application.dispatch('Param', 'read')
+    @application.input_to('Param', 'add')
+  end
 
+  def edit
+    params = Factory::get('ParamModel')
+    command = @model.command[1][1]
+    params.substituted_params.each do |param|
+      param_description, param_value, input = param
+      if input.empty? and param_description.include? "("
+        input = param_description[/\((.*?)\)/, 1]
+      end
+      command.gsub!(param_value, input)
+    end
+    Clipboard.copy command
+    exit
+  end
+end
+
+class ParamController < Controller
+  def read
+    if param = @model.params_pop
+      puts param.inspect
+      @view.display_item param.keys.to_s
+    else
+      @application.dispatch('Command', 'edit')
+    end
+  end
+
+  def add input
+    @model.substituted_params.push(@model.param.to_a.flatten.push(input))
+    @application.dispatch('Param', 'read')
   end
 end
 

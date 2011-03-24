@@ -24,7 +24,7 @@ end
 class CategoryModel
   attr_accessor :all_categories
   def initialize
-    @all_categories = YAML::load(File.open('/home/nils/dev/mycommands/categories.yml'))
+    @all_categories = YAML::load(File.open('categories.yml'))
   end
 
   def categories
@@ -40,13 +40,14 @@ class CategoryModel
     if @categories
       @categories = @categories.sort.map {|i| i = i[0]}
     else
-      false
+      nil
     end
   end
 
   def last_category
     choices = Factory::get('HistoryModel').category_choices
     last_choice = choices.pop
+    return nil if last_choice.nil?
     @categories = @all_categories
     if choices.empty?
       category = @categories.sort[last_choice][0]
@@ -63,7 +64,7 @@ end
 class CommandModel
   attr_accessor :all_commands, :commands, :category, :command, :params
   def initialize
-    @all_commands = YAML::load(File.open('/home/nils/dev/mycommands/commands.yml'))
+    @all_commands = YAML::load(File.open('commands.yml'))
   end
 
   def commands

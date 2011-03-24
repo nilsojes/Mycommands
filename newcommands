@@ -1,13 +1,15 @@
 #!/usr/bin/ruby
-path = '/home/nils/dev/mycommands/'
+#THIS_FILE = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+#$: << File.dirname(THIS_FILE)
+$: << File.expand_path(File.dirname( File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__ ))
 require 'rubygems'
 require 'clipboard'
 require 'ruby-debug'
 require 'yaml'
 require 'readline'
-require "#{path}controllers.rb"
-require "#{path}models.rb"
-require "#{path}views.rb"
+require "controllers.rb"
+require "models.rb"
+require "views.rb"
 class Factory
   @@objects = []
   def self.get _class
@@ -47,6 +49,8 @@ class Application
   def check_input input
     @go_back = false
     case input
+    when 'q'
+      exit if %w(Category Command).include? @controller
     when '0'
       @history.back
       @controller, @action, input = @history.history.last

@@ -12,27 +12,29 @@ end
 class CategoryController < Controller
   def browse category = nil
       categories = @model.categories
+      category = @model.last_category
       if categories
-        @view.display_list(categories)
+        @view.display_list(categories, category)
+        Factory::get('CommandController').browse(category, categories)
         @application.input_to 'Category', 'browse'
       else
-        puts @history.category_choices.inspect
-        @application.dispatch('Command', 'browse', @model.last_category)
+        @application.dispatch('Command', 'browse', category)
       end
   end
 end
 
 class CommandController < Controller
-  def browse category
+  def browse category, categories = nil
     @model.category = category
-    @view.display_list(@model.commands)
-    @application.input_to 'Command', 'read'
+    commands = @model.commands
+    @view.display_list(commands, category, categories.size) unless commands.empty?
+    @application.input_to 'Command', 'read' unless categories
   end
 
   def read choice
     command = @model.command(choice.to_i-1)
     @application.dispatch('Param', 'read')
-    @application.input_to('Param', 'add')
+    @application.input_to('Param', 'edit')
   end
 
   def edit
@@ -53,14 +55,13 @@ end
 class ParamController < Controller
   def read
     if param = @model.params_pop
-      puts param.inspect
       @view.display_item param.keys.to_s
     else
       @application.dispatch('Command', 'edit')
     end
   end
 
-  def add input
+  def edit input
     @model.substituted_params.push(@model.param.to_a.flatten.push(input))
     @application.dispatch('Param', 'read')
   end

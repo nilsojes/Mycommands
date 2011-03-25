@@ -1,3 +1,6 @@
+# For more formating options:
+# http://en.wikipedia.org/wiki/ANSI_escape_code#Codes
+
 class String
   def normal
     self
@@ -11,30 +14,21 @@ class String
   def red
     "\e[91m#{self}\e[0m"
   end
-  def red_b
-    "\e[41m#{self}\e[0m"
-  end
   def green
     "\e[92m#{self}\e[0m"
   end
   def yellow
     "\e[93m#{self}\e[0m"
   end
-  def yellow_b
-    "\e[103m#{self}\e[0m"
-  end
   def blue
     "\e[94m#{self}\e[0m"
-  end
-  def cyan
-    "\e[96m#{self}\e[0m"
   end
 end
 
 class View
   def header text
     puts "
-    "+"#{text}".underline #.yellow_b
+    "+"#{text}".underline
   end
 
   def list items, color = :normal, offset = 0

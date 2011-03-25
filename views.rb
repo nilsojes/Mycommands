@@ -23,6 +23,9 @@ class String
   def blue
     "\e[94m#{self}\e[0m"
   end
+  def cyan
+    "\e[96m#{self}\e[0m"
+  end
 end
 
 class View

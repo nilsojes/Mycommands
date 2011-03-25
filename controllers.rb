@@ -11,9 +11,6 @@ end
 
 class CategoryController < Controller
   def browse choice = nil
-    puts @model.count
-    puts choice
-#    if @model.count < choice
     begin
       categories = @model.categories
     rescue

@@ -4,42 +4,49 @@ class Controller
     name = self.class.to_s.gsub('Controller', '')
     @model = Factory::get(name+'Model')
     @view = Factory::get(name+'View')
-    @application =  Factory::get('Application')
-    @history =  Factory::get('HistoryModel')
+    @application =  Factory::get(:Application)
+    @history =  Factory::get(:HistoryModel)
   end
 end
 
 class CategoryController < Controller
-  def browse category = nil
+  def browse choice = nil
+    puts @model.count
+    puts choice
+#    if @model.count < choice
+    begin
       categories = @model.categories
-      category = @model.last_category
-      if categories
-        @view.display_list(categories, category)
-        Factory::get('CommandController').browse(category, categories)
-        @application.input_to 'Category', 'browse'
-      else
-        @application.dispatch('Command', 'browse', category)
-      end
+    rescue
+      Factory::get(:CommandController).read choice.to_i-@model.count
+    end
+    category = @model.last_category
+    if categories
+      @view.display_list(categories, category)
+      Factory::get(:CommandController).browse(category, @model.count)
+      @application.input_to 'Category', 'browse'
+    else
+      @application.dispatch('Command', 'browse', category)
+    end
   end
 end
 
 class CommandController < Controller
-  def browse category, categories = nil
+  def browse category, offset = 0
     @model.category = category
     commands = @model.commands
-    @view.display_list(commands, category, categories.size) unless commands.empty?
-    @application.input_to 'Command', 'read' unless categories
+    @view.display_list(commands, category, offset) unless commands.empty?
+    @application.input_to 'Command', 'read' if offset == 0
   end
 
   def read choice
-    command = @model.command(choice.to_i-1)
+    @model.set_command(choice.to_i-1)
     @application.dispatch('Param', 'read')
     @application.input_to('Param', 'edit')
   end
 
   def edit
     params = Factory::get('ParamModel')
-    command = @model.command[1][1]
+    command = @model.command_string
     params.substituted_params.each do |param|
       param_description, param_value, input = param
       if input.empty? and param_description.include? "("

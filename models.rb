@@ -22,9 +22,9 @@ class HistoryModel
 end
 
 class CategoryModel
-  attr_accessor :all_categories
+  attr_accessor :all_categories, :count
   def initialize
-    @all_categories = YAML::load(File.open('categories.yml'))
+    @all_categories = YAML::load(File.open(Path+'/categories.yml'))
   end
 
   def categories
@@ -39,13 +39,15 @@ class CategoryModel
     end
     if @categories
       @categories = @categories.sort.map {|i| i = i[0]}
+      @count = @categories.size
+      @categories
     else
       nil
     end
   end
 
   def last_category
-    choices = Factory::get('HistoryModel').category_choices
+    choices = Factory::get(:HistoryModel).category_choices
     last_choice = choices.pop
     return nil if last_choice.nil?
     @categories = @all_categories
@@ -64,27 +66,30 @@ end
 class CommandModel
   attr_accessor :all_commands, :commands, :category, :command, :params
   def initialize
-    @all_commands = YAML::load(File.open('commands.yml'))
+    @all_commands = YAML::load(File.open(Path+'/commands.yml'))
   end
 
   def commands
     @commands = @all_commands.to_a.select {|c| c[1][0] == @category}
   end
 
-  def command choice = nil
-    if choice.nil?
-      @command
-    else
-      @command = @commands[choice]
-    end
+  def set_command choice
+    @command = @commands[choice]
+  end
+
+  def command_string
+    @command[1][1]
+  end
+
+  def command_params
+    @command[1][2..-1].reverse
   end
 end
 
 class ParamModel
   attr_accessor :params, :param, :substituted_params
   def initialize
-    command = Factory::get('CommandModel').command
-    @params = command[1][2, 100].reverse
+    @params = Factory::get(:CommandModel).command_params
     @substituted_params = []
   end
 

@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
-#THIS_FILE = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
-#$: << File.dirname(THIS_FILE)
-$: << File.expand_path(File.dirname( File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__ ))
+
+Path = File.expand_path(File.dirname( File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__ ))
+$: << Path
 require 'rubygems'
 require 'clipboard'
 require 'ruby-debug'
@@ -14,9 +14,9 @@ class Factory
   @@objects = []
   def self.get _class
     for object in @@objects
-      return object if object.class == eval(_class)
+      return object if object.class == eval(_class.to_s)
     end
-    object = eval(_class).new
+    object = eval(_class.to_s).new
     @@objects.push object
     object
   end
@@ -25,7 +25,7 @@ end
 class Application
   attr_accessor :history, :controller, :action, :go_back
   def initialize
-    @history = Factory::get('HistoryModel')
+    @history = Factory::get(:HistoryModel)
     @controller = 'Category'
     @action = 'browse'
   end
@@ -71,4 +71,4 @@ class Application
   end
 end
 
-Factory::get('Application').run
+Factory::get(:Application).run

@@ -4,7 +4,7 @@ README Mycommands
 Summary
 -------
 
-Mycommands is a simple command line script to organize and fetch your favourite unix/linux commands.
+Mycommands is a simple command line script (written in ruby) to organize and fetch your favourite unix/linux commands.
 
 
 About
@@ -16,8 +16,10 @@ This script makes it easier to fetch and organize my favourite commands.
 Installing
 ----------
 
-See INSTALL file.
-
+Clone or download the files. Install the required gems.
+chmod u+x mycommands
+Symlink mycommands to some directory in your path.
+Linux users have to install xclip as well (you might have to install it from source).
 
 Usage
 -----

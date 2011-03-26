@@ -16,10 +16,10 @@ This script makes it easier to fetch and organize my favourite commands.
 Installing
 ----------
 
-Clone or download the files. Install the required gems.
-chmod u+x mycommands
-Symlink mycommands to some directory in your path.
-Linux users have to install xclip as well (you might have to install it from source).
+ * Clone or download the files. Install the required gems.
+ * chmod u+x mycommands
+ * Symlink mycommands to some directory in your path.
+ * Linux users have to install xclip as well (you might have to install it from source).
 
 Usage
 -----

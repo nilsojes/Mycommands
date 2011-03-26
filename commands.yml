@@ -9,7 +9,7 @@ Find in files and list files:
   - String to search for: STRING
   - In what files (*): FILETYPE
 Delete specific files in cwd recursive:
-  - Sub
+  - Files
   - find . -name \FILES -CONFIRM rm {} \;
   - Files to remove (*.svn): FILES
   - Confirm exec/ok (ok): CONFIRM

@@ -24,15 +24,17 @@ Graphical tree of sub-directories:
   - ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
 Downsize images and crop to a certain size:
   - Images
-  - mogrify -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0"
+  - mogrify -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0" IMAGES
   - Width: WIDTH
   - Height: HEIGHT
+  - Images: IMAGES
 Downsize images and crop to a certain size and put in a sub directory:
   - Images
-  - mkdir DIR && mogrify -path DIR -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0"
+  - mkdir DIR && mogrify -path DIR -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0" IMAGES
   - Width: WIDTH
   - Height: HEIGHT
   - Directory: DIR
+  - Images: IMAGES
 Display linux release:
   - Sysadmin
   - cat /etc/lsb-release
@@ -55,5 +57,7 @@ Tar exclude example:
   - tar --exclude="upprop*" --exclude="cache/*" -czvf ../backup_html_20010313.tgz .
 Tar exclude:
   - Tar
-  - tar --exclude="EXCLUDE" -czvf
+  - tar --exclude="EXCLUDE" -czvf NAME FILES
   - What to exclude: EXCLUDE
+  - Name of archive: NAME
+  - Files to archive: FILES

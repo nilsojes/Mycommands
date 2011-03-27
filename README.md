@@ -1,4 +1,4 @@
-README Mycommands
+README
 =================
 
 About
@@ -26,3 +26,18 @@ Use "0" (zero) to go back to the previous listing of categories and commands.
 
 Choose the command you need and fill in the parameters if there are any.
 You can use tab expansion while filling in the parameters.
+
+About the yml files
+-------------------
+
+If the script finds categories.yml or commands.yml in ~/Mycommands
+those files will be used instead of the default ones.
+
+Categories in categories.yml that has no subcategories has to end with a trailing blank space.
+
+The format of commands in commands.yml:
+    Command description
+      - Category
+      - The command itself PARAM1 PARAM2
+      - Example param1: PARAM1
+      - Example param2: PARAM2

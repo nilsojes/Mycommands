@@ -36,8 +36,8 @@ those files will be used instead of the default ones.
 Categories in categories.yml that has no subcategories has to end with a trailing blank space.
 
 The format of commands in commands.yml:
-    Command description
+    Command description:
       - Category
-      - The command itself PARAM1 PARAM2
+      - command PARAM1 PARAM2
       - Example param1: PARAM1
       - Example param2: PARAM2

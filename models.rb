@@ -24,7 +24,11 @@ end
 class CategoryModel
   attr_accessor :all_categories, :count
   def initialize
-    @all_categories = YAML::load(File.open(Path+'/categories.yml'))
+    if File.exist?(ENV['HOME']+'/Mycommands/categories.yml')
+      @all_categories = YAML::load(File.open(ENV['HOME']+'/Mycommands/categories.yml'))
+    else
+      @all_categories = YAML::load(File.open(Path+'/categories.yml'))
+    end
   end
 
   def categories
@@ -66,7 +70,11 @@ end
 class CommandModel
   attr_accessor :all_commands, :commands, :category, :command, :params
   def initialize
-    @all_commands = YAML::load(File.open(Path+'/commands.yml'))
+    if File.exist?(ENV['HOME']+'/Mycommands/commands.yml')
+      @all_commands = YAML::load(File.open(ENV['HOME']+'/Mycommands/commands.yml'))
+    else
+      @all_commands = YAML::load(File.open(Path+'/commands.yml'))
+    end
   end
 
   def commands

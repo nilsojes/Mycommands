@@ -1,12 +1,6 @@
 README Mycommands
 =================
 
-Summary
--------
-
-Mycommands is a simple command line script (written in ruby) to organize and fetch your favourite unix/linux commands.
-
-
 About
 -----
 

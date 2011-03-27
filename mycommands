@@ -52,7 +52,7 @@ class Application
     when 'q'
       exit if %w(Category Command).include? @controller
     when '0'
-      exit if @history.history.size == 1
+      exit if @history.at_start?
       @history.back
       @controller, @action, input = @history.history.last
       input_to @controller, @action

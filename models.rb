@@ -19,16 +19,19 @@ class HistoryModel
   def category_choices
     @history.select {|h| h[0]=='Category'}.map {|h| h=h[2]}.select{|h| !h.nil?}.map {|h| h=h.to_i-1}
   end
+
+  def at_start?
+    @history.size == 1
+  end
 end
 
 class CategoryModel
   attr_accessor :all_categories, :count
   def initialize
-    if File.exist?(ENV['HOME']+'/Mycommands/categories.yml')
-      @all_categories = YAML::load(File.open(ENV['HOME']+'/Mycommands/categories.yml'))
-    else
-      @all_categories = YAML::load(File.open(Path+'/categories.yml'))
-    end
+    default_yml = Path+'/categories.yml'
+    user_yml = ENV['HOME']+'/Mycommands/categories.yml'
+    yml = File.exist?(user_yml) ? user_yml : default_yml
+    @all_categories = YAML::load(File.open(yml))
   end
 
   def categories
@@ -70,11 +73,10 @@ end
 class CommandModel
   attr_accessor :all_commands, :commands, :category, :command, :params
   def initialize
-    if File.exist?(ENV['HOME']+'/Mycommands/commands.yml')
-      @all_commands = YAML::load(File.open(ENV['HOME']+'/Mycommands/commands.yml'))
-    else
-      @all_commands = YAML::load(File.open(Path+'/commands.yml'))
-    end
+    default_yml = Path+'/commands.yml'
+    user_yml = ENV['HOME']+'/Mycommands/commands.yml'
+    yml = File.exist?(user_yml) ? user_yml : default_yml
+    @all_commands = YAML::load(File.open(yml))
   end
 
   def commands

@@ -61,6 +61,10 @@ class CommandView < View
   def display_item
 
   end
+
+  def empty_category category
+    puts "No commands or categories in \"#{category}\""
+  end
 end
 
 class ParamView < View

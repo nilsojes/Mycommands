@@ -11,15 +11,15 @@ end
 
 class CategoryController < Controller
   def browse choice = nil
-    begin
-      categories = @model.categories
-    rescue
+    if !Factory::get(:HistoryModel).at_start? and @model.count < choice.to_i
       Factory::get(:CommandController).read choice.to_i-@model.count
+      return
     end
+    categories = @model.categories
     category = @model.last_category
     if categories
       @view.display_list(categories, category)
-      Factory::get(:CommandController).browse(category, @model.count)
+      Factory::get(:CommandController).browse(category, @model.count) unless Factory::get(:HistoryModel).at_start?
       @application.input_to 'Category', 'browse'
     else
       @application.dispatch('Command', 'browse', category)
@@ -29,10 +29,16 @@ end
 
 class CommandController < Controller
   def browse category, offset = 0
+    only_commands = offset == 0
     @model.category = category
     commands = @model.commands
-    @view.display_list(commands, category, offset) unless commands.empty?
-    @application.input_to 'Command', 'read' if offset == 0
+    if commands.empty? and only_commands
+      @view.empty_category category
+      exit
+    elsif !commands.empty?
+      @view.display_list(commands, category, offset)
+      @application.input_to 'Command', 'read' if only_commands
+    end
   end
 
   def read choice

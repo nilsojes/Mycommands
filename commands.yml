@@ -13,15 +13,17 @@ Delete specific files in cwd recursive:
   - find . -name \FILES -CONFIRM rm {} \;
   - Files to remove (*.svn): FILES
   - Confirm exec/ok (ok): CONFIRM
-Remove broken links:
-  - Files
-  - find -L . -type l -delete
 List the size of sub folders:
   - Files
   - du -h --max-depth=1
-Graphical tree of sub-directories:
-  - Files
-  - ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
+Remove broken links:
+  - Symlinks
+  - find -L . -type l -delete
+Create symlink:
+  - Symlinks
+  - ln -s TARGET NAME
+  - Target to link to: TARGET
+  - Name of link: NAME
 Downsize images and crop to a certain size:
   - Images
   - mogrify -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0" IMAGES

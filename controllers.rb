@@ -41,10 +41,6 @@ class CommandController < Controller
     end
   end
 
-  def read choice
-
-  end
-
   def edit
     params = Factory::get('ParamModel')
     command = @model.command_string

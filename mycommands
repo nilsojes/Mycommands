@@ -28,6 +28,7 @@ class Application
     @history = Factory::get(:HistoryModel)
     @controller = 'Category'
     @action = 'browse'
+    @go_back = false
   end
   def run
     dispatch @controller, @action
@@ -62,7 +63,7 @@ class Application
   end
 
   def dispatch controller, action, input = nil
-#    puts "dispatching #{controller}, #{action}, #{input}"
+    puts "dispatching #{controller}, #{action}, #{input}" if Debug
     @history.add(controller, action, input) unless @go_back
     if input.nil?
       Factory::get(controller+'Controller').send action
@@ -71,5 +72,5 @@ class Application
     end
   end
 end
-
+Debug = ARGV.include? '-D'
 Factory::get(:Application).run

@@ -1,5 +1,5 @@
 class HistoryModel
-  attr_accessor :history
+  attr_reader :history
   def initialize
     @history = []
   end
@@ -26,7 +26,7 @@ class HistoryModel
 end
 
 class CategoryModel
-  attr_accessor :all_categories, :count
+  attr_reader :count
   def initialize
     default_yml = Path+'/categories.yml'
     user_yml = ENV['HOME']+'/Mycommands/categories.yml'
@@ -71,7 +71,8 @@ class CategoryModel
 end
 
 class CommandModel
-  attr_accessor :all_commands, :commands, :category, :command, :params
+  attr_accessor :category
+  attr_reader :command
   def initialize
     default_yml = Path+'/commands.yml'
     user_yml = ENV['HOME']+'/Mycommands/commands.yml'
@@ -97,7 +98,8 @@ class CommandModel
 end
 
 class ParamModel
-  attr_accessor :params, :param, :substituted_params
+  attr_accessor :substituted_params
+  attr_reader :params, :param
   def initialize
     @substituted_params = []
   end

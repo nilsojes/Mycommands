@@ -27,7 +27,7 @@ Use "0" (zero) to go back to the previous listing of categories and commands.
 Choose the command you need and fill in the parameters if there are any.
 You can use tab expansion while filling in the parameters.
 
-Parameters can have a default value in (). If you press just press enter the default value will be used.
+Parameters can have a default value in (). If you just press enter the default value will be used.
 
 About the yml files
 -------------------

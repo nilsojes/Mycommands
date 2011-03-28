@@ -99,8 +99,11 @@ end
 class ParamModel
   attr_accessor :params, :param, :substituted_params
   def initialize
-    @params = Factory::get(:CommandModel).command_params
     @substituted_params = []
+  end
+
+  def set_params
+    @params = Factory::get(:CommandModel).command_params
   end
 
   def params_pop

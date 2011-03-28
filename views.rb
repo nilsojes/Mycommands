@@ -58,8 +58,12 @@ class CommandView < View
     list commands, :green, offset
   end
 
-  def display_item
+  def display_item command
+    puts "
+The command below has been copied to the clipboard
+#{command.green}
 
+"
   end
 
   def empty_category category

@@ -12,7 +12,7 @@ end
 class CategoryController < Controller
   def browse choice = nil
     if !Factory::get(:HistoryModel).at_start? and @model.count < choice.to_i
-      Factory::get(:CommandController).read choice.to_i-@model.count
+      Factory::get(:ParamController).read choice.to_i-@model.count
       return
     end
     categories = @model.categories
@@ -37,14 +37,12 @@ class CommandController < Controller
       exit
     elsif !commands.empty?
       @view.display_list(commands, category, offset)
-      @application.input_to 'Command', 'read' if only_commands
+      @application.input_to 'Param', 'read' if only_commands
     end
   end
 
   def read choice
-    @model.set_command(choice.to_i-1)
-    @application.dispatch('Param', 'read')
-    @application.input_to('Param', 'edit')
+
   end
 
   def edit
@@ -57,15 +55,21 @@ class CommandController < Controller
       end
       command.gsub!(param_value, input)
     end
+    @view.display_item command
     Clipboard.copy command
     exit
   end
 end
 
 class ParamController < Controller
-  def read
+  def read choice = nil
+    unless choice.nil?
+      Factory::get(:CommandModel).set_command(choice.to_i-1)
+      @model.set_params
+    end
     if param = @model.params_pop
       @view.display_item param.keys.to_s
+      @application.input_to('Param', 'edit')
     else
       @application.dispatch('Command', 'edit')
     end

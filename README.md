@@ -21,7 +21,7 @@ This usually works on Linux based systems, but not on Mac OS X without extending
 
 Update to the latest version is simple as:
 
-	$ cd ~/develop/git-ftp.git
+	$ cd ~/dev/mycommands
 	$ git pull
 
  * Install the required gems.

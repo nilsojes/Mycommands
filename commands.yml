@@ -56,7 +56,7 @@ Reset git working tree:
   - git reset --hard HEAD
 Tar exclude example:
   - Tar
-  - tar --exclude="upprop*" --exclude="cache/*" -czvf ../backup_html_20010313.tgz .
+  - tar --exclude="dir_to_exclude*" --exclude="exclude_contents/*" -czvf ../backup.tgz .
 Tar exclude:
   - Tar
   - tar --exclude="EXCLUDE" -czvf NAME FILES

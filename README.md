@@ -10,10 +10,21 @@ This script makes it easier to fetch and organize my favourite commands.
 Installing
 ----------
 
- * Clone or download the files.
+This usually works on Linux based systems, but not on Mac OS X without extending $PATH.
+
+	$ mkdir -p ~/dev/mycommands
+	$ cd ~/dev/mycommands
+	$ git clone git://github.com/nilseriksson/Mycommands.git .
+	$ chmod u+x mycommands
+	$ mkdir ~/bin && cd ~/bin/
+	$ ln -s ~/dev/mycommands/mycommands mycommands
+
+Update to the latest version is simple as:
+
+	$ cd ~/develop/git-ftp.git
+	$ git pull
+
  * Install the required gems.
- * chmod u+x mycommands
- * Symlink mycommands to some directory in your path.
  * Linux users have to install xclip as well (you might have to install it from source).
 
 Usage

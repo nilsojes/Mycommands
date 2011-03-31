@@ -26,34 +26,33 @@ end
 
 class CategoryController < Controller
   def browse choice = nil
-    if !Factory::get(:HistoryModel).at_start? and @model.count < choice.to_i
-      Factory::get(:ParamController).read choice.to_i-@model.count
-      return
+    if choice == '0'
+      @model.back
+    elsif !choice.nil?
+      @model.choose choice
     end
-    categories = @model.categories
-    category = @model.last_category
-    if categories
-      @view.display_list(categories, category)
-      Factory::get(:CommandController).browse(category, @model.count) unless Factory::get(:HistoryModel).at_start?
+    if @model.categories
+      @view.display_list(@model.categories, @model.category)
+      puts @model.choices.inspect
+      Factory::get(:CommandController).browse #unless @model.choices.empty?
       @application.input_to 'Category', 'browse'
     else
-      @application.dispatch('Command', 'browse', category)
+      @application.dispatch('Command', 'browse')
     end
   end
 end
 
 class CommandController < Controller
-  def browse category, offset = 0
-    only_commands = offset == 0
-    @model.category = category
-    commands = @model.commands
-    if commands.empty? and only_commands
-      @view.empty_category category
-      exit
-    elsif !commands.empty?
-      @view.display_list(commands, category, offset)
-      @application.input_to 'Param', 'read' if only_commands
+  def browse
+    if @model.commands
+      @view.display_list(@model.commands, @model.category, @model.offset)
+#      @application.input_to 'Param', 'read'
     end
+  end
+
+  def read choice
+    @model.choose choice
+    @view.display_item @model.command
   end
 
   def edit

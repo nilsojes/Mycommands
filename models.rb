@@ -41,21 +41,36 @@ class HistoryModel
 end
 
 class CategoryModel
-  attr_reader :count
+  include Observable
+  attr_reader :categories, :category, :count, :choices
   def initialize
     default_yml = Path+'/categories.yml'
     user_yml = ENV['HOME']+'/Mycommands/categories.yml'
     yml = File.exist?(user_yml) ? user_yml : default_yml
     @all_categories = YAML::load(File.open(yml))
+    @choices = []
+    @category = ''
+    set_categories
+    add_observer Factory::get(:CommandModel)
   end
 
-  def categories
-    choices = Factory::get('HistoryModel').category_choices
-    if choices.empty?
+  def choose choice
+    @choices.push choice.to_i - 1
+#    puts @choices.inspect
+    set_categories
+  end
+
+  def back
+    @choices.pop
+    set_categories
+  end
+
+  def set_categories
+    if @choices.empty?
       @categories = @all_categories
     else
       @categories = @all_categories
-      for choice in choices
+      for choice in @choices
         @categories = @categories.sort[choice][1]
       end
     end
@@ -64,43 +79,66 @@ class CategoryModel
       @count = @categories.size
       @categories
     else
+      @count = 0
       nil
     end
+    set_category
   end
 
-  def last_category
-    choices = Factory::get(:HistoryModel).category_choices
-    last_choice = choices.pop
-    return nil if last_choice.nil?
-    @categories = @all_categories
-    if choices.empty?
-      category = @categories.sort[last_choice][0]
-    else
-      for choice in choices
-        @categories = @categories.sort[choice][1]
+  def set_category
+    unless @choices.empty?
+      categories = @all_categories
+      choices = @choices.clone
+      last_choice = choices.pop
+      if choices.empty?
+        @category = categories.sort[last_choice][0]
+      else
+        for choice in choices
+          categories = categories.sort[choice][1]
+        end
+        @category = categories.to_a[last_choice][0]
       end
-      category = @categories.to_a[last_choice][0]
+      @category
+    else
+      @category = nil
     end
-    category
+    changed
+    notify_observers self
   end
 end
 
 class CommandModel
-  attr_accessor :category
-  attr_reader :command
+  include Observable
+  attr_reader :commands, :command, :category, :offset
   def initialize
     default_yml = Path+'/commands.yml'
     user_yml = ENV['HOME']+'/Mycommands/commands.yml'
     yml = File.exist?(user_yml) ? user_yml : default_yml
     @all_commands = YAML::load(File.open(yml))
+    @offset = 0
+    add_observer Factory::get(:ParamModel)
   end
 
-  def commands
-    @commands = @all_commands.to_a.select {|c| c[1][0] == @category}
+  def update category
+    unless category.category.nil?
+      @category = category.category
+      @offset = category.count
+      @commands = @all_commands.to_a.select {|c| c[1][0] == category.category}
+    else
+      @commands = nil
+      @offset = 0
+      @category = nil
+    end
+  end
+
+  def choose choice
+    set_command choice.to_i - 1 - @offset
   end
 
   def set_command choice
     @command = @commands[choice]
+    changed
+    notify_observers self
   end
 
   def command_string
@@ -119,9 +157,13 @@ class ParamModel
     @substituted_params = []
   end
 
-  def set_params
-    @params = Factory::get(:CommandModel).command_params
+  def update command
+    @params = command.command_params
   end
+
+#  def set_params
+#    @params = Factory::get(:CommandModel).command_params
+#  end
 
   def params_pop
     @param = @params.pop

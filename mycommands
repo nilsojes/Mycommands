@@ -25,9 +25,11 @@ require 'clipboard'
 require 'ruby-debug' if Debug
 require 'yaml'
 require 'readline'
+require 'observer'
 require "controllers.rb"
 require "models.rb"
 require "views.rb"
+
 
 class Factory
   @@objects = []
@@ -71,13 +73,13 @@ class Application
     case input
     when 'q'
       exit if %w(Category Command).include? @controller
-    when '0'
-      exit if @history.at_start?
-      @history.back
-      @controller, @action, input = @history.history.last
-      input_to @controller, @action
-      @go_back = true
-      dispatch @controller, @action, input
+#    when '0'
+#      exit if @history.at_start?
+#      @history.back
+#      @controller, @action, input = @history.history.last
+#      input_to @controller, @action
+#      @go_back = true
+#      dispatch @controller, @action, input
     end
   end
 

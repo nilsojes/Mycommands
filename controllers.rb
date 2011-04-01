@@ -44,7 +44,7 @@ class CommandController < Controller
 
   def read choice
     @model.choose choice
-    unless @model.command_params.nil?
+    unless @model.command_params.empty?
       @application.dispatch [:Param, :read]
       return
     end

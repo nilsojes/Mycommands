@@ -13,33 +13,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class HistoryModel
-  attr_reader :history
-  def initialize
-    @history = []
-  end
-
-  def add *dispatch_args
-    @history.push dispatch_args
-  end
-
-  def back
-    if @history.last[0] == 'Command'
-      @history.pop(2)
-    else
-      @history.pop
-    end
-  end
-
-  def category_choices
-    @history.select {|h| h[0]=='Category'}.map {|h| h=h[2]}.select{|h| !h.nil?}.map {|h| h=h.to_i-1}
-  end
-
-  def at_start?
-    @history.size == 1
-  end
-end
-
 class CategoryModel
   include Observable
   attr_reader :categories, :category, :count, :choices
@@ -66,13 +39,10 @@ class CategoryModel
   end
 
   def set_categories
-    if @choices.empty?
-      @categories = @all_categories
-    else
-      @categories = @all_categories
-      for choice in @choices
-        @categories = @categories.sort[choice][1]
-      end
+#    debugger
+    @categories = @all_categories
+    for choice in @choices
+      @categories = @categories.sort[choice][1]
     end
     if @categories
       @categories = @categories.sort.map {|i| i = i[0]}
@@ -109,7 +79,7 @@ end
 
 class CommandModel
   include Observable
-  attr_reader :commands, :command, :category, :offset
+  attr_reader :commands, :command, :category, :offset, :finished_command
   def initialize
     default_yml = Path+'/commands.yml'
     user_yml = ENV['HOME']+'/Mycommands/commands.yml'
@@ -148,25 +118,44 @@ class CommandModel
   def command_params
     @command[1][2..-1].reverse
   end
+
+  def substitute_params
+    @finished_command = command_string
+    Factory::get('ParamModel').substituted_params.each do |param|
+      @finished_command = @finished_command.gsub param.keys.to_s, param.values.to_s
+    end
+  end
 end
 
 class ParamModel
   attr_accessor :substituted_params
-  attr_reader :params, :param
+  attr_reader :params, :param, :current_param
   def initialize
     @substituted_params = []
+    @current_param = 0
   end
 
   def update command
     @params = command.command_params
   end
 
-#  def set_params
-#    @params = Factory::get(:CommandModel).command_params
-#  end
+  def param
+    @params.reverse[@current_param]
+  end
 
-  def params_pop
-    @param = @params.pop
-    @param
+  def param_description
+    param.keys.to_s
+  end
+  
+  def param_value
+    param.values.to_s
+  end
+
+  def substitute_param input
+    if input.empty? and param_description.include? "("
+      input = param_description[/\((.*?)\)/, 1]
+    end
+    @substituted_params.push param_value => input
+    @current_param = @current_param + 1
   end
 end

@@ -44,15 +44,12 @@ class String
 end
 
 class View
-  def header text
-    puts "
-    "+"#{text}".underline
+  def initialize
+    @router = Factory::get(:Router)
   end
 
-  def list items, color = :normal, offset = 0
-    items.each_with_index do |(key, value), index|
-      puts "#{index+1+offset} - #{key.send color}"
-    end
+  def header text
+    puts "\n    "+"#{text}".underline
   end
 end
 
@@ -63,22 +60,27 @@ class CategoryView < View
     else
       header "Categories"
     end
-    list categories, :cyan
+    @router.add_route(:match => '0', :controller => "Category", :action => "browse", :input => '0')
+    categories.each_with_index do |(key, value), index|
+      puts "#{index+1} - #{key.cyan}"
+      @router.add_route(:match => (index+1).to_s, :controller => :Category, :action => :browse, :input => (index+1).to_s)
+    end
   end
 end
 
 class CommandView < View
   def display_list commands, category, offset
+    @router.add_route(:match => '0', :controller => "Category", :action => "browse", :input => '0')
     header "Commands in \"#{category}\""
-    list commands, :green, offset
+    commands.each_with_index do |(key, value), index|
+      puts "#{index+1+offset} - #{key.green}"
+      @router.add_route(:match => (index+1+offset).to_s, :controller => :Command, :action => :read, :input => (index+1).to_s)
+    end
   end
 
   def display_item command
-    puts "
-The command below has been copied to the clipboard
-#{command.green}
-
-"
+    puts "\nThe command below has been copied to the clipboard
+#{command.green}\n\n"
   end
 
   def empty_category category
@@ -88,6 +90,7 @@ end
 
 class ParamView < View
   def display_item param
+    @router.add_route(:match => '.|^', :controller => :Param, :action => :edit)
     header :"Parameters for command" if Factory::get('ParamModel').substituted_params.empty?
     puts "#{param}?".yellow
   end

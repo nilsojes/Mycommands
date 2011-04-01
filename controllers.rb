@@ -20,7 +20,6 @@ class Controller
     @model = Factory::get(name+'Model')
     @view = Factory::get(name+'View')
     @application =  Factory::get(:Application)
-    @history =  Factory::get(:HistoryModel)
   end
 end
 
@@ -31,14 +30,8 @@ class CategoryController < Controller
     elsif !choice.nil?
       @model.choose choice
     end
-    if @model.categories
-      @view.display_list(@model.categories, @model.category)
-      puts @model.choices.inspect
-      Factory::get(:CommandController).browse #unless @model.choices.empty?
-      @application.input_to 'Category', 'browse'
-    else
-      @application.dispatch('Command', 'browse')
-    end
+    @view.display_list(@model.categories, @model.category) if @model.categories
+    Factory::get(:CommandController).browse
   end
 end
 
@@ -46,48 +39,40 @@ class CommandController < Controller
   def browse
     if @model.commands
       @view.display_list(@model.commands, @model.category, @model.offset)
-#      @application.input_to 'Param', 'read'
     end
   end
 
   def read choice
     @model.choose choice
-    @view.display_item @model.command
+    unless @model.command_params.nil?
+      @application.dispatch [:Param, :read]
+      return
+    end
+    @view.display_item @model.command_string
+    Clipboard.copy @model.command_string
+    exit
   end
 
   def edit
-    params = Factory::get('ParamModel')
-    command = @model.command_string
-    params.substituted_params.each do |param|
-      param_description, param_value, input = param
-      if input.empty? and param_description.include? "("
-        input = param_description[/\((.*?)\)/, 1]
-      end
-      command.gsub!(param_value, input)
-    end
-    @view.display_item command
-    Clipboard.copy command
+    @model.substitute_params
+    @view.display_item @model.finished_command
+    Clipboard.copy @model.finished_command
     exit
   end
 end
 
 class ParamController < Controller
-  def read choice = nil
-    unless choice.nil?
-      Factory::get(:CommandModel).set_command(choice.to_i-1)
-      @model.set_params
-    end
-    if param = @model.params_pop
-      @view.display_item param.keys.to_s
-      @application.input_to('Param', 'edit')
-    else
-      @application.dispatch('Command', 'edit')
-    end
+  def read
+    @view.display_item @model.param_description
   end
 
   def edit input
-    @model.substituted_params.push(@model.param.to_a.flatten.push(input))
-    @application.dispatch('Param', 'read')
+    @model.substitute_param input
+    if @model.current_param == @model.params.size
+      @application.dispatch([:Command, :edit])
+    else
+      @application.dispatch([:Param, :read])
+    end
   end
 end
 

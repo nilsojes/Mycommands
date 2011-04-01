@@ -43,16 +43,40 @@ class Factory
   end
 end
 
+class Router
+  def initialize
+    @routes = []
+  end
+
+  def add_route route
+    @routes.push route
+  end
+
+  def clear_routes
+    @routes = []
+  end
+
+  def route input
+    @routes.each do |route|
+      if input.match route[:match]
+        return route[:controller], route[:action], route[:input].nil? ? input : route[:input]
+      end
+    end
+    puts "Terminating script."
+    exit
+  end
+end
+
 class Application
   attr_accessor :history, :controller, :action, :go_back
   def initialize
-    @history = Factory::get(:HistoryModel)
+    @router = Factory::get(:Router)
     @controller = 'Category'
     @action = 'browse'
     @go_back = false
   end
   def run
-    dispatch @controller, @action
+    dispatch ['Category', 'browse']
     get_input
   end
 
@@ -63,29 +87,15 @@ class Application
 
   def get_input
     while input = Readline.readline('> ', true)
-      check_input input
-      dispatch @controller, @action, input unless @go_back
+      route = @router.route input
+      @router.clear_routes
+      dispatch route
     end
   end
 
-  def check_input input
-    @go_back = false
-    case input
-    when 'q'
-      exit if %w(Category Command).include? @controller
-#    when '0'
-#      exit if @history.at_start?
-#      @history.back
-#      @controller, @action, input = @history.history.last
-#      input_to @controller, @action
-#      @go_back = true
-#      dispatch @controller, @action, input
-    end
-  end
-
-  def dispatch controller, action, input = nil
+  def dispatch args
+    controller, action, input= args.map {|i| i = i.to_s}
     puts "Dispatching: #{controller}, #{action}, #{input}" if Debug
-    @history.add(controller, action, input) unless @go_back
     if input.nil?
       Factory::get(controller+'Controller').send action
     else

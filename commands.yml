@@ -54,6 +54,9 @@ Start webbserver in cwd:
 Reset git working tree:
   - Misc
   - git reset --hard HEAD
+Count lines in git repository:
+  - Misc
+  - git ls-files | xargs wc -l
 Tar exclude example:
   - Tar
   - tar --exclude="dir_to_exclude*" --exclude="exclude_contents/*" -czvf ../backup.tgz .

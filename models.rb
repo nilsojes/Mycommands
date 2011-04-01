@@ -17,6 +17,7 @@ class CategoryModel
   include Observable
   attr_reader :categories, :category, :count, :choices
   def initialize
+    add_observer Factory::get(:CommandModel)
     default_yml = Path+'/categories.yml'
     user_yml = ENV['HOME']+'/Mycommands/categories.yml'
     yml = File.exist?(user_yml) ? user_yml : default_yml
@@ -24,12 +25,10 @@ class CategoryModel
     @choices = []
     @category = ''
     set_categories
-    add_observer Factory::get(:CommandModel)
   end
 
   def choose choice
     @choices.push choice.to_i - 1
-#    puts @choices.inspect
     set_categories
   end
 
@@ -39,7 +38,6 @@ class CategoryModel
   end
 
   def set_categories
-#    debugger
     @categories = @all_categories
     for choice in @choices
       @categories = @categories.sort[choice][1]
@@ -81,12 +79,12 @@ class CommandModel
   include Observable
   attr_reader :commands, :command, :category, :offset, :finished_command
   def initialize
+    add_observer Factory::get(:ParamModel)
     default_yml = Path+'/commands.yml'
     user_yml = ENV['HOME']+'/Mycommands/commands.yml'
     yml = File.exist?(user_yml) ? user_yml : default_yml
     @all_commands = YAML::load(File.open(yml))
     @offset = 0
-    add_observer Factory::get(:ParamModel)
   end
 
   def update category

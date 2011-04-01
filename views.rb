@@ -51,16 +51,20 @@ class View
   def header text
     puts "\n    "+"#{text}".underline
   end
+
+  def add_default_routes
+    @router.add_route(:match => '0', :controller => "Category", :action => "browse", :input => '0')
+  end
 end
 
 class CategoryView < View
   def display_list categories, category
+    add_default_routes
     if category
       header "Categories in \"#{category}\""
     else
       header "Categories"
     end
-    @router.add_route(:match => '0', :controller => "Category", :action => "browse", :input => '0')
     categories.each_with_index do |(key, value), index|
       puts "#{index+1} - #{key.cyan}"
       @router.add_route(:match => (index+1).to_s, :controller => :Category, :action => :browse, :input => (index+1).to_s)
@@ -70,7 +74,7 @@ end
 
 class CommandView < View
   def display_list commands, category, offset
-    @router.add_route(:match => '0', :controller => "Category", :action => "browse", :input => '0')
+    add_default_routes
     header "Commands in \"#{category}\""
     commands.each_with_index do |(key, value), index|
       puts "#{index+1+offset} - #{key.green}"
@@ -90,8 +94,8 @@ end
 
 class ParamView < View
   def display_item param
-    @router.add_route(:match => '.|^', :controller => :Param, :action => :edit)
     header :"Parameters for command" if Factory::get('ParamModel').substituted_params.empty?
     puts "#{param}?".yellow
+    @router.add_route(:match => '.|^', :controller => :Param, :action => :edit)
   end
 end

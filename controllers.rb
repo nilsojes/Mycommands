@@ -14,7 +14,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class Controller
-  attr_accessor :model, :view, :application, :history
   def initialize
     name = self.class.to_s.gsub('Controller', '')
     @model = Factory::get(name+'Model')
@@ -37,9 +36,7 @@ end
 
 class CommandController < Controller
   def browse
-    if @model.commands
-      @view.display_list(@model.commands, @model.category, @model.offset)
-    end
+    @view.display_list(@model.commands, @model.category, @model.offset) if @model.commands
   end
 
   def read choice

@@ -23,52 +23,52 @@ class Controller
 end
 
 class CategoryController < Controller
-  def browse choice = nil
+  def index choice = nil
     if choice == '0'
-      @model.back
+      @model.go_back
     elsif !choice.nil?
       @model.choose choice
     end
-    @view.display_list(@model.categories, @model.category) if @model.categories
-    Factory::get(:CommandController).browse
+    @view.index(@model.categories, @model.category) if @model.categories
+    Factory::get(:CommandController).index
   end
 end
 
 class CommandController < Controller
-  def browse
-    @view.display_list(@model.commands, @model.category, @model.offset) if @model.commands
+  def index
+    @view.index(@model.commands, @model.category, @model.offset) if @model.commands
   end
 
-  def read choice
+  def show choice
     @model.choose choice
     unless @model.command_params.empty?
-      @application.dispatch [:Param, :read]
+      @application.dispatch [:Param, :show]
       return
     end
-    @view.display_item @model.command_string
+    @view.show @model.command_string
     Clipboard.copy @model.command_string
     exit
   end
 
-  def edit
+  def update
     @model.substitute_params
-    @view.display_item @model.finished_command
+    @view.show @model.finished_command
     Clipboard.copy @model.finished_command
     exit
   end
 end
 
 class ParamController < Controller
-  def read
-    @view.display_item @model.param_description
+  def show
+    @view.show @model.param_description
   end
 
-  def edit input
+  def update input
     @model.substitute_param input
     if @model.current_param == @model.params.size
-      @application.dispatch([:Command, :edit])
+      @application.dispatch([:Command, :update])
     else
-      @application.dispatch([:Param, :read])
+      @application.dispatch([:Param, :show])
     end
   end
 end

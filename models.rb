@@ -32,7 +32,7 @@ class CategoryModel
     set_categories
   end
 
-  def back
+  def go_back
     @choices.pop
     set_categories
   end

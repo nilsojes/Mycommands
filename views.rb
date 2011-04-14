@@ -53,12 +53,12 @@ class View
   end
 
   def add_default_routes
-    @router.add_route(:match => '0', :controller => "Category", :action => "browse", :input => '0')
+    @router.add_route(:match => '0', :controller => "Category", :action => "index", :input => '0')
   end
 end
 
 class CategoryView < View
-  def display_list categories, category
+  def index categories, category
     add_default_routes
     if category
       header "Categories in \"#{category}\""
@@ -67,22 +67,22 @@ class CategoryView < View
     end
     categories.each_with_index do |(key, value), index|
       puts "#{index+1} - #{key.cyan}"
-      @router.add_route(:match => (index+1).to_s, :controller => :Category, :action => :browse, :input => (index+1).to_s)
+      @router.add_route(:match => (index+1).to_s, :controller => :Category, :action => :index, :input => (index+1).to_s)
     end
   end
 end
 
 class CommandView < View
-  def display_list commands, category, offset
+  def index commands, category, offset
     add_default_routes
     header "Commands in \"#{category}\""
     commands.each_with_index do |(key, value), index|
       puts "#{index+1+offset} - #{key.green}"
-      @router.add_route(:match => (index+1+offset).to_s, :controller => :Command, :action => :read, :input => (index+1).to_s)
+      @router.add_route(:match => (index+1+offset).to_s, :controller => :Command, :action => :show, :input => (index+1).to_s)
     end
   end
 
-  def display_item command
+  def show command
     puts "\nThe command below has been copied to the clipboard
 #{command.green}\n\n"
   end
@@ -93,9 +93,9 @@ class CommandView < View
 end
 
 class ParamView < View
-  def display_item param
+  def show param
     header :"Parameters for command" if Factory::get('ParamModel').substituted_params.empty?
-    puts "#{param}?".yellow
-    @router.add_route(:match => '.|^', :controller => :Param, :action => :edit)
+    puts "    #{param}?".yellow
+    @router.add_route(:match => '.|^', :controller => :Param, :action => :update)
   end
 end

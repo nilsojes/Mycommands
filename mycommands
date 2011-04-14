@@ -26,6 +26,7 @@ require 'ruby-debug' if Debug
 require 'yaml'
 require 'readline'
 require 'observer'
+require 'erb'
 require "controllers.rb"
 require "models.rb"
 require "views.rb"
@@ -73,12 +74,12 @@ class Application
   end
 
   def run
-    dispatch ['Category', 'browse']
+    dispatch ['Category', 'index']
     get_input
   end
 
   def get_input
-    while input = Readline.readline('> ', true)
+    while input = Readline.readline('--> ', true)
       route = @router.route input
       @router.clear_routes
       dispatch route

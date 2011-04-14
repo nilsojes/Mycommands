@@ -66,3 +66,10 @@ Tar exclude:
   - What to exclude: EXCLUDE
   - Name of archive: NAME
   - Files to archive: FILES
+Restore mysql dump:
+  - Sysadmin
+  - mysql --user=USER --password=PASSWORD DATABASE < SQL
+  - User: USER
+  - Password: PASSWORD
+  - Database: DATABASE
+  - .sql file: SQL

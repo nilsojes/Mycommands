@@ -7,6 +7,11 @@ About
 Often when I need a solution for a specific task I do a google search to find out what command I can use. Before I made this script I had a text file with commands saved that I wanted to rember. 
 This script makes it easier to fetch and organize my favourite commands.
 
+Screenshot
+----------
+
+<img src="http://img190.imageshack.us/img190/521/mycommands.png" />
+
 Installing
 ----------
 

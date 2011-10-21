@@ -63,7 +63,7 @@ class Router
         return route[:controller], route[:action], route[:input].nil? ? input : route[:input]
       end
     end
-    puts "Terminating script."
+    puts "Bye!"
     exit
   end
 end

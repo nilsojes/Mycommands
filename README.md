@@ -57,5 +57,5 @@ The format of commands in commands.yml:
     Command description:
       - Category
       - command PARAM1 PARAM2
-      - Example param1: PARAM1
-      - Example param2 (default value): PARAM2
+      - PARAM1: Example param1
+      - PARAM2: Example param2 (default value)

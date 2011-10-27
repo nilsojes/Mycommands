@@ -54,8 +54,14 @@ those files will be used instead of the default ones.
 Categories in categories.yml that has no subcategories has to end with a trailing blank space.
 
 The format of commands in commands.yml:
-    Command description:
-      - Category
-      - command PARAM1 PARAM2
-      - PARAM1: Example param1
-      - PARAM2: Example param2 (default value)
+<pre>
+Command description:
+  - Category
+  - command PARAM1 PARAM2 PARAM3
+  - PARAM1: Example param1
+  - PARAM2: Example param2 (default value)
+  - PARAM3:
+    - Example param3
+    - "@result = 'ruby code to evaluate'"
+</pre>
+@result will be the default value for the third parameter

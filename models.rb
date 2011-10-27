@@ -142,11 +142,11 @@ class ParamModel
   end
 
   def param_description
-    param.keys.to_s
+    param.values.flatten.first.to_s
   end
   
   def param_value
-    param.values.to_s
+    param.keys.to_s
   end
 
   def substitute_param input
@@ -154,6 +154,8 @@ class ParamModel
       input = param_description[/\((.*?)\)/, 1]
     end
     @substituted_params.push param_value => input
+    result = [param_value, input]
     @current_param = @current_param + 1
+    return result
   end
 end

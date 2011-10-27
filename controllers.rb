@@ -20,6 +20,17 @@ class Controller
     @view = Factory::get(name+'View')
     @application =  Factory::get(:Application)
   end
+
+  def render action = nil
+    instance_variables.each do |i|
+      @view.instance_variable_set i, eval(i) unless %w(@model view application).include? i
+    end
+    if action
+      @view.send(action)
+    else
+      @view.send(caller(1).first[/`.*'/][1..-2].to_sym)
+    end
+  end
 end
 
 class CategoryController < Controller
@@ -29,14 +40,19 @@ class CategoryController < Controller
     elsif !choice.nil?
       @model.choose choice
     end
-    @view.index(@model.categories, @model.category) if @model.categories
+    @categories = @model.categories
+    @category = @model.category
+    render if @categories
     Factory::get(:CommandController).index
   end
 end
 
 class CommandController < Controller
   def index
-    @view.index(@model.commands, @model.category, @model.offset) if @model.commands
+    @commands = @model.commands
+    @category = @model.category
+    @offset = @model.offset
+    render if @model.commands
   end
 
   def show choice
@@ -45,14 +61,16 @@ class CommandController < Controller
       @application.dispatch [:Param, :show]
       return
     end
-    @view.show @model.command_string
+    @command = @model.command_string
+    render
     Clipboard.copy @model.command_string
     exit
   end
 
   def update
     @model.substitute_params
-    @view.show @model.finished_command
+    @command = @model.finished_command
+    render :show
     Clipboard.copy @model.finished_command
     exit
   end
@@ -60,11 +78,20 @@ end
 
 class ParamController < Controller
   def show
-    @view.show @model.param_description
+    if @model.param.values.first.is_a? Array
+      @model.param.values.flatten[1..-1].each do |line|
+        eval line
+      end
+      @param = "#{@model.param_description} (#{@result})"
+    else
+      @param = @model.param_description
+    end
+    render
   end
 
   def update input
-    @model.substitute_param input
+    param_value, param_input = @model.substitute_param input
+    instance_variable_set "@#{param_value}", param_input
     if @model.current_param == @model.params.size
       @application.dispatch([:Command, :update])
     else

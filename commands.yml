@@ -1,18 +1,18 @@
 Search in files and show context:
   - Search
   - find . -iname 'FILETYPE' | xargs grep --color=auto -i -b1 -a1 'STRING'
-  - String to search for: STRING
-  - In what files (*): FILETYPE
+  - STRING: String to search for
+  - FILETYPE: In what files (*)
 Find in files and list files:
   - Search
   - find . -iname 'FILETYPE' | xargs grep 'STRING' -sl
-  - String to search for: STRING
-  - In what files (*): FILETYPE
+  - STRING: String to search for
+  - FILETYPE: In what files (*)
 Delete specific files in cwd recursive:
   - Files
   - find . -name \FILES -CONFIRM rm {} \;
-  - Files to remove (*.svn): FILES
-  - Confirm exec/ok (ok): CONFIRM
+  - FILES: Files to remove (*.svn)
+  - CONFIRM: Confirm exec/ok (ok)
 List the size of sub folders:
   - Files
   - du -h --max-depth=1
@@ -22,21 +22,21 @@ Remove broken links:
 Create symlink:
   - Symlinks
   - ln -s TARGET NAME
-  - Target to link to: TARGET
-  - Name of link: NAME
+  - TARGET: Target to link to
+  - NAME: Name of link
 Downsize images and crop to a certain size:
   - Images
   - mogrify -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0" IMAGES
-  - Width: WIDTH
-  - Height: HEIGHT
-  - Images: IMAGES
+  - WIDTH: Width
+  - HEIGHT: Height
+  - IMAGES: Images
 Downsize images and crop to a certain size and put in a sub directory:
   - Images
   - mkdir DIR && mogrify -path DIR -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0" IMAGES
-  - Width: WIDTH
-  - Height: HEIGHT
-  - Directory: DIR
-  - Images: IMAGES
+  - WIDTH: Width
+  - HEIGHT: Height
+  - DIR: Directory
+  - IMAGES: Images
 Display linux release:
   - Sysadmin
   - cat /etc/lsb-release
@@ -46,8 +46,8 @@ Restart apache:
 Add existing user to existing group:
   - Sysadmin
   - sudo usermod -a -G GROUP USER
-  - Group: GROUP
-  - User: USER
+  - GROUP: Group
+  - USER: User
 Start webbserver in cwd:
   - Misc
   - python -m SimpleHTTPServer
@@ -63,13 +63,40 @@ Tar exclude example:
 Tar exclude:
   - Tar
   - tar --exclude="EXCLUDE" -czvf NAME FILES
-  - What to exclude: EXCLUDE
-  - Name of archive: NAME
-  - Files to archive: FILES
+  - EXCLUDE: What to exclude
+  - NAME: Name of archive
+  - FILES: Files to archive
 Restore mysql dump:
   - Sysadmin
   - mysql --user=USER --password=PASSWORD DATABASE < SQL
-  - User: USER
-  - Password: PASSWORD
-  - Database: DATABASE
-  - .sql file: SQL
+  - USER: User
+  - PASSWORD: Password
+  - DATABASE: Database
+  - SQL: .sql file
+Duplicate database:
+  - Sysadmin
+  - mysqladmin create NEW -u USER -p && mysqldump -u USER OLD | mysql -u USER -h localhost NEW
+  - USER: User
+  - OLD: Database to duplicate
+  - NEW: Name of new database
+Delete branch:
+  - svn
+  - svn delete BRANCH_URL -m "MESSAGE"
+  - BRANCH_URL: Url to branch
+  - MESSAGE: Commit message
+Create branch:
+  - svn
+  - svn copy SOURCE BRANCH_URL -m "Creating a private branch, BRANCH_NAME, of SOURCE."
+  - SOURCE: Source url
+  - BRANCH_URL: Branch url
+  - BRANCH_NAME: Branch name
+Merge branch:
+  - svn
+  - svn merge -rCOPY_REV:TRUNK_REV BRANCH_URL
+  - BRANCH_URL: Branch url
+  - TRUNK_REV:
+    - Trunk revision
+    - "@result = `svn info`.match(/Revision: \d+/).to_s.match(/\d+/).to_s"
+  - COPY_REV:
+    - Copy revision
+    - "@result = `svn log --stop-on-copy #{@BRANCH_URL}`.match(/r\d+/).to_s[1..-1]"

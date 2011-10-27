@@ -58,14 +58,14 @@ class View
 end
 
 class CategoryView < View
-  def index categories, category
+  def index 
     add_default_routes
-    if category
-      header "Categories in \"#{category}\""
+    if @category
+      header "Categories in \"#{@category}\""
     else
       header "Categories"
     end
-    categories.each_with_index do |(key, value), index|
+    @categories.each_with_index do |(key, value), index|
       puts "#{index+1} - #{key.cyan}"
       @router.add_route(:match => (index+1).to_s, :controller => :Category, :action => :index, :input => (index+1).to_s)
     end
@@ -73,18 +73,18 @@ class CategoryView < View
 end
 
 class CommandView < View
-  def index commands, category, offset
+  def index
     add_default_routes
-    header "Commands in \"#{category}\""
-    commands.each_with_index do |(key, value), index|
-      puts "#{index+1+offset} - #{key.green}"
-      @router.add_route(:match => (index+1+offset).to_s, :controller => :Command, :action => :show, :input => (index+1).to_s)
+    header "Commands in \"#{@category}\""
+    @commands.each_with_index do |(key, value), index|
+      puts "#{index+1+@offset} - #{key.green}"
+      @router.add_route(:match => (index+1+@offset).to_s, :controller => :Command, :action => :show, :input => (index+1).to_s)
     end
   end
 
-  def show command
+  def show
     puts "\nThe command below has been copied to the clipboard
-#{command.green}\n\n"
+#{@command.green}\n\n"
   end
 
   def empty_category category
@@ -93,9 +93,9 @@ class CommandView < View
 end
 
 class ParamView < View
-  def show param
+  def show
     header :"Parameters for command" if Factory::get('ParamModel').substituted_params.empty?
-    puts "    #{param}?".yellow
-    @router.add_route(:match => '.|^', :controller => :Param, :action => :update)
+    puts "    #{@param}?".yellow
+    @router.add_route(:match => '.|^', :controller => :Param, :action => :update, :input => @result)
   end
 end

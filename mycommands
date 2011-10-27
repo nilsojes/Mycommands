@@ -87,7 +87,7 @@ class Application
   end
 
   def dispatch args
-    controller, action, input= args.map {|i| i = i.to_s}
+    controller, action, input= args.map &:to_s
     puts "Dispatching: #{controller}, #{action}, #{input}" if Debug
     if input.nil?
       Factory::get(controller+'Controller').send action

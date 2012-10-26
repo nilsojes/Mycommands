@@ -120,7 +120,7 @@ class CommandModel
   def substitute_params
     @finished_command = command_string
     Factory::get('ParamModel').substituted_params.each do |param|
-      @finished_command = @finished_command.gsub param.keys.to_s, param.values.to_s
+      @finished_command = @finished_command.gsub param.keys.first.to_s, param.values.first.to_s
     end
   end
 end
@@ -146,7 +146,7 @@ class ParamModel
   end
   
   def param_value
-    param.keys.to_s
+    param.keys.first.to_s
   end
 
   def substitute_param input

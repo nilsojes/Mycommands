@@ -1,3 +1,18 @@
+Delete pipe:
+  - Dev
+  - sudo ipfw delete 1
+Add pipe:
+  - Dev
+  - sudo ipfw add 1 pipe 1 src-port PORT
+  - PORT: Port to add the pipe to
+Add bandwidth limit pipe:
+  - Dev
+  - sudo ipfw pipe 1 config bw 250Kbit/s delay 350ms
+Find and ignore errors:
+  - Search
+  - find PATH -name "PATTERN" |& grep -v "Permission denied"
+  - PATH: Path to search in
+  - PATTERN: Pattern to search for
 Search in files and show context:
   - Search
   - find . -iname 'FILETYPE' | xargs grep --color=auto -i -b1 -a1 'STRING'
@@ -96,7 +111,15 @@ Merge branch:
   - BRANCH_URL: Branch url
   - TRUNK_REV:
     - Trunk revision
-    - "@result = `svn info`.match(/Revision: \d+/).to_s.match(/\d+/).to_s"
+    - "@result = `svn info`.match(/Revision: \\d+/).to_s.match(/\\d+/).to_s"
   - COPY_REV:
     - Copy revision
-    - "@result = `svn log --stop-on-copy #{@BRANCH_URL}`.match(/r\d+/).to_s[1..-1]"
+    - "@result = `svn log --stop-on-copy #{@BRANCH_URL}`.match(/r\\d+/).to_s[1..-1]"
+Change permissons on directories:
+  - Permissions
+  - find . -type d -name \* -exec chmod RIGHTS {} \;
+  - RIGHTS: Permissions (775)
+Change permissons on files:
+  - Permissions
+  - find . -type f -name \* -exec chmod RIGHTS {} \;
+  - RIGHTS: Permissions (775)

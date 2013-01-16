@@ -127,3 +127,6 @@ Show process on port:
   - Sysadmin
   - sudo lsof -i:PORT -P
   - PORT: Port (3000)
+Reset changed and new files in working directory:
+  - Git
+  - git reset --hard && git clean -fd

@@ -55,7 +55,7 @@ class CategoryModel
 
   def set_category
     unless @choices.empty?
-      categories = @all_categories
+      categories = @all_categories.clone
       choices = @choices.clone
       last_choice = choices.pop
       if choices.empty?
@@ -64,7 +64,7 @@ class CategoryModel
         for choice in choices
           categories = categories.sort[choice][1]
         end
-        @category = categories.to_a[last_choice][0]
+        @category = categories.sort[last_choice][0]
       end
       @category
     else

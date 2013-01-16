@@ -123,3 +123,7 @@ Change permissons on files:
   - Permissions
   - find . -type f -name \* -exec chmod RIGHTS {} \;
   - RIGHTS: Permissions (775)
+Show process on port:
+  - Sysadmin
+  - sudo lsof -i:PORT -P
+  - PORT: Port (3000)

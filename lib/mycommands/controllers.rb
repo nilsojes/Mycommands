@@ -56,6 +56,7 @@ class CommandController < Controller
   end
 
   def show choice
+    require 'pry'; binding.pry
     @model.choose choice
     unless @model.command_params.empty?
       @application.dispatch [:Param, :show]

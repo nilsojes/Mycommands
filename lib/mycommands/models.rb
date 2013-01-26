@@ -18,7 +18,7 @@ class CategoryModel
   attr_reader :categories, :category, :count, :choices
   def initialize
     add_observer Factory::get(:CommandModel)
-    default_yml = Path+'/categories.yml'
+    default_yml = Path+'/mycommands/categories.yml'
     user_yml = ENV['HOME']+'/Mycommands/categories.yml'
     yml = File.exist?(user_yml) ? user_yml : default_yml
     @all_categories = YAML::load(File.open(yml))
@@ -80,7 +80,7 @@ class CommandModel
   attr_reader :commands, :command, :category, :offset, :finished_command
   def initialize
     add_observer Factory::get(:ParamModel)
-    default_yml = Path+'/commands.yml'
+    default_yml = Path+'/mycommands/commands.yml'
     user_yml = ENV['HOME']+'/Mycommands/commands.yml'
     yml = File.exist?(user_yml) ? user_yml : default_yml
     @all_commands = YAML::load(File.open(yml))
@@ -90,7 +90,7 @@ class CommandModel
   def update category
     unless category.category.nil?
       @category = category.category
-      @offset = category.count
+      @offset = 0 #category.count
       @commands = @all_commands.to_a.select {|c| c[1][0] == category.category}
     else
       @commands = nil
@@ -100,11 +100,13 @@ class CommandModel
   end
 
   def choose choice
+    require 'pry'; binding.pry
     set_command choice.to_i - 1 - @offset
   end
 
   def set_command choice
     @command = @commands[choice]
+    require 'pry'; binding.pry
     changed
     notify_observers self
   end

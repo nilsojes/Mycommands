@@ -71,7 +71,7 @@ module Mycommands
     end
 
     def to_hash
-      {@category[0] => has_children? ? children.map(&:to_hash) : nil }
+      {@category[0] => has_children? ? children.inject({}) {|category_hash, c| category_hash.merge!(c.to_hash)} : nil }
     end
   end
 end

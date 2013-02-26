@@ -9,7 +9,7 @@ module Mycommands
 
     def render action = nil
       instance_variables.each do |i|
-        @view.instance_variable_set i, eval(i.to_s) unless %w(@model view application).include? i
+        @view.instance_variable_set i, eval(i.to_s) unless %w(model view application).include? i
       end
       if action
         @view.send(action)

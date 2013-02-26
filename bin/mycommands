@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby
+
+require 'bundler'
+
 module Mycommands
 
   DEBUG = ARGV.include? '-d'

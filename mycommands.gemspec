@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
+  gem.add_dependency "bundler", "~> 1.3.0"
   gem.add_dependency "clipboard", "~> 1.0.1"
   gem.add_development_dependency "minitest", "~> 4.5.0"
   gem.add_development_dependency "pry", "~> 0.9.11.4"

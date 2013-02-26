@@ -1,132 +1,127 @@
-Delete pipe:
-  - Dev
-  - sudo ipfw delete 1
-Add pipe:
-  - Dev
-  - sudo ipfw add 1 pipe 1 src-port PORT
-  - PORT: Port to add the pipe to
+---
 Add bandwidth limit pipe:
-  - Dev
-  - sudo ipfw pipe 1 config bw 250Kbit/s delay 350ms
-Find and ignore errors:
-  - Search
-  - find PATH -name "PATTERN" |& grep -v "Permission denied"
-  - PATH: Path to search in
-  - PATTERN: Pattern to search for
-Search in files and show context:
-  - Search
-  - find . -iname 'FILETYPE' | xargs grep --color=auto -i -b1 -a1 'STRING'
-  - STRING: String to search for
-  - FILETYPE: In what files (*)
-Find in files and list files:
-  - Search
-  - find . -iname 'FILETYPE' | xargs grep 'STRING' -sl
-  - STRING: String to search for
-  - FILETYPE: In what files (*)
+- Dev
+- sudo ipfw pipe 1 config bw 250Kbit/s delay 350ms
+Add pipe:
+- Dev
+- sudo ipfw add 1 pipe 1 src-port PORT
+- PORT: Port to add the pipe to
+Delete pipe:
+- Dev
+- sudo ipfw delete 1
 Delete specific files in cwd recursive:
-  - Files
-  - find . -name \FILES -CONFIRM rm {} \;
-  - FILES: Files to remove (*.svn)
-  - CONFIRM: Confirm exec/ok (ok)
+- Files
+- find . -name \FILES -CONFIRM rm {} \;
+- FILES: Files to remove (*.svn)
+- CONFIRM: Confirm exec/ok (ok)
 List the size of sub folders:
-  - Files
-  - du -h --max-depth=1
-Remove broken links:
-  - Symlinks
-  - find -L . -type l -delete
-Create symlink:
-  - Symlinks
-  - ln -s TARGET NAME
-  - TARGET: Target to link to
-  - NAME: Name of link
-Downsize images and crop to a certain size:
-  - Images
-  - mogrify -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0" IMAGES
-  - WIDTH: Width
-  - HEIGHT: Height
-  - IMAGES: Images
-Downsize images and crop to a certain size and put in a sub directory:
-  - Images
-  - mkdir DIR && mogrify -path DIR -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0" IMAGES
-  - WIDTH: Width
-  - HEIGHT: Height
-  - DIR: Directory
-  - IMAGES: Images
-Display linux release:
-  - Sysadmin
-  - cat /etc/lsb-release
-Restart apache:
-  - Sysadmin
-  - sudo /etc/init.d/apache2 restart
-Add existing user to existing group:
-  - Sysadmin
-  - sudo usermod -a -G GROUP USER
-  - GROUP: Group
-  - USER: User
-Start webbserver in cwd:
-  - Misc
-  - python -m SimpleHTTPServer
-Reset git working tree:
-  - Misc
-  - git reset --hard HEAD
+- Files
+- du -h --max-depth=1
 Count lines in git repository:
-  - Misc
-  - git ls-files | xargs wc -l
-Tar exclude example:
-  - Tar
-  - tar --exclude="dir_to_exclude*" --exclude="exclude_contents/*" -czvf ../backup.tgz .
-Tar exclude:
-  - Tar
-  - tar --exclude="EXCLUDE" -czvf NAME FILES
-  - EXCLUDE: What to exclude
-  - NAME: Name of archive
-  - FILES: Files to archive
-Restore mysql dump:
-  - Sysadmin
-  - mysql --user=USER --password=PASSWORD DATABASE < SQL
-  - USER: User
-  - PASSWORD: Password
-  - DATABASE: Database
-  - SQL: .sql file
-Duplicate database:
-  - Sysadmin
-  - mysqladmin create NEW -u USER -p && mysqldump -u USER OLD | mysql -u USER -h localhost NEW
-  - USER: User
-  - OLD: Database to duplicate
-  - NEW: Name of new database
-Delete branch:
-  - svn
-  - svn delete BRANCH_URL -m "MESSAGE"
-  - BRANCH_URL: Url to branch
-  - MESSAGE: Commit message
-Create branch:
-  - svn
-  - svn copy SOURCE BRANCH_URL -m "Creating a private branch, BRANCH_NAME, of SOURCE."
-  - SOURCE: Source url
-  - BRANCH_URL: Branch url
-  - BRANCH_NAME: Branch name
-Merge branch:
-  - svn
-  - svn merge -rCOPY_REV:TRUNK_REV BRANCH_URL
-  - BRANCH_URL: Branch url
-  - TRUNK_REV:
-    - Trunk revision
-    - "@result = `svn info`.match(/Revision: \\d+/).to_s.match(/\\d+/).to_s"
-  - COPY_REV:
-    - Copy revision
-    - "@result = `svn log --stop-on-copy #{@BRANCH_URL}`.match(/r\\d+/).to_s[1..-1]"
-Change permissons on directories:
-  - Permissions
-  - find . -type d -name \* -exec chmod RIGHTS {} \;
-  - RIGHTS: Permissions (775)
-Change permissons on files:
-  - Permissions
-  - find . -type f -name \* -exec chmod RIGHTS {} \;
-  - RIGHTS: Permissions (775)
-Show process on port:
-  - Sysadmin
-  - sudo lsof -i:PORT -P
-  - PORT: Port (3000)
+- Git
+- git ls-files | xargs wc -l
 Reset changed and new files in working directory:
-  - Git
-  - git reset --hard && git clean -fd
+- Git
+- git reset --hard && git clean -fd
+Downsize images and crop to a certain size:
+- Images
+- mogrify -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0" IMAGES
+- WIDTH: Width
+- HEIGHT: Height
+- IMAGES: Images
+Downsize images and crop to a certain size and put in a sub directory:
+- Images
+- mkdir DIR && mogrify -path DIR -resize "WIDTHxHEIGHT^" -gravity Center -crop "WIDTHxHEIGHT+0+0" IMAGES
+- WIDTH: Width
+- HEIGHT: Height
+- DIR: Directory
+- IMAGES: Images
+Change permissons on directories:
+- Permissions
+- find . -type d -name \* -exec chmod RIGHTS {} \;
+- RIGHTS: Permissions (775)
+Change permissons on files:
+- Permissions
+- find . -type f -name \* -exec chmod RIGHTS {} \;
+- RIGHTS: Permissions (775)
+Create branch:
+- SVN
+- SVN copy SOURCE BRANCH_URL -m "Creating a private branch, BRANCH_NAME, of SOURCE."
+- SOURCE: Source url
+- BRANCH_URL: Branch url
+- BRANCH_NAME: Branch name
+Delete branch:
+- SVN
+- SVN delete BRANCH_URL -m "MESSAGE"
+- BRANCH_URL: Url to branch
+- MESSAGE: Commit message
+Get revision for creation of branch:
+- SVN
+- SVN log --stop-on-copy BRANCH_URL
+- BRANCH_URL: Url for branch
+Merge branch:
+- SVN
+- SVN merge -rCOPY_REV:TRUNK_REV BRANCH_URL
+- BRANCH_URL: Branch url
+- TRUNK_REV: Trunk revision
+- COPY_REV: Copy revision
+Find and ignore errors:
+- Search
+- find PATH -name "PATTERN" |& grep -v "Permission denied"
+- PATH: Path to search in
+- PATTERN: Pattern to search for
+Find in files and list files:
+- Search
+- find . -iname 'FILETYPE' | xargs grep 'STRING' -sl
+- STRING: String to search for
+- FILETYPE: In what files (*)
+Search in files and show context:
+- Search
+- find . -iname 'FILETYPE' | xargs grep --color=auto -i -b1 -a1 'STRING'
+- STRING: String to search for
+- FILETYPE: In what files (*)
+Create symlink:
+- Symlinks
+- ln -s TARGET NAME
+- TARGET: Target to link to
+- NAME: Name of link
+Remove broken links:
+- Symlinks
+- find -L . -type l -delete
+Add existing user to existing group:
+- Sysadmin
+- sudo usermod -a -G GROUP USER
+- GROUP: Group
+- USER: User
+Display linux release:
+- Sysadmin
+- cat /etc/lsb-release
+Duplicate database:
+- Sysadmin
+- mysqladmin create NEW -u USER -p && mysqldump -u USER OLD | mysql -u USER -h localhost NEW
+- USER: User
+- OLD: Database to duplicate
+- NEW: Name of new database
+Restart apache:
+- Sysadmin
+- sudo /etc/init.d/apache2 restart
+Restore mysql dump:
+- Sysadmin
+- mysql --user=USER --password=PASSWORD DATABASE < SQL
+- USER: User
+- PASSWORD: Password
+- DATABASE: Database
+- SQL: .sql file
+Show process on port:
+- Sysadmin
+- sudo lsof -i:PORT -P
+- PORT: Port (3000)
+Tar exclude:
+- Tar
+- tar --exclude="EXCLUDE" -czvf NAME FILES
+- EXCLUDE: What to exclude
+- NAME: Name of archive
+- FILES: Files to archive
+Tar exclude example:
+- Tar
+- tar --exclude="dir_to_exclude*" --exclude="exclude_contents/*" -czvf ../backup.tgz .

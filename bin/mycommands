@@ -1,3 +1,16 @@
 #!/usr/bin/env ruby
+module Mycommands
 
-require 'mycommands'
+  DEBUG = ARGV.include? '-d'
+  TEST = ARGV.include? '-t'
+
+  Bundler.require(:default)
+
+  action = :print_version if ARGV.include?('-v')
+
+  action = :sort_yaml_files if ARGV.include?('-s')
+
+  action ||= :run
+
+  Factory::get(:Application).send(action)
+end

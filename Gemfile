@@ -1,5 +1,4 @@
-gem 'clipboard'
-gem 'ruby-debug'
-gem 'yaml'
-gem 'readline'
-gem 'erb'
+source 'https://rubygems.org'
+
+# Specify your gem's dependencies in mycommands.gemspec
+gemspec

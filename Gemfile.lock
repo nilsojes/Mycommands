@@ -1,0 +1,28 @@
+PATH
+  remote: .
+  specs:
+    mycommands (1.0.0)
+      clipboard (~> 1.0.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    clipboard (1.0.1)
+    coderay (1.0.8)
+    method_source (0.8.1)
+    minitest (4.5.0)
+    pry (0.9.11.4)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.4)
+    rake (10.0.3)
+    slop (3.4.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  minitest (~> 4.5.0)
+  mycommands!
+  pry (~> 0.9.11.4)
+  rake (~> 10.0.3)

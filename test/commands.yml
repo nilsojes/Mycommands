@@ -1,0 +1,16 @@
+List the size of sub folders:
+  - Files
+  - du -h --max-depth=1
+Delete specific files in cwd recursive:
+  - Files
+  - find . -name \FILES -CONFIRM rm {} \;
+  - FILES: Files to remove (*.svn)
+  - CONFIRM: Confirm exec/ok (ok)
+Remove broken links:
+  - Symlinks
+  - find -L . -type l -delete
+Create symlink:
+  - Symlinks
+  - ln -s TARGET NAME
+  - TARGET: Target to link to
+  - NAME: Name of link

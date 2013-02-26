@@ -1,13 +1,11 @@
 #!/usr/bin/env ruby
 
-require 'bundler'
+require_relative '../lib/mycommands'
 
 module Mycommands
 
   DEBUG = ARGV.include? '-d'
   TEST = ARGV.include? '-t'
-
-  Bundler.require(:default)
 
   action = :print_version if ARGV.include?('-v')
 

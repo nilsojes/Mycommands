@@ -9,8 +9,8 @@ Gem::Specification.new do |gem|
   gem.version       = Mycommands::VERSION
   gem.authors       = ["Nils Eriksson"]
   gem.email         = ["nils.epost@gmail.com"]
-  gem.description   = %q{Often when I need a solution for a specific task I do a google search to find out what command I can use. Before I made this script I had a text file with commands saved that I wanted to rember. This script makes it easier to fetch and organize my favourite commands.}
-  gem.summary       = %q{Small console app to manage your favourite commands}
+  gem.description   = %q{Small console app to manage your favourite commands}
+  gem.summary       = %q{Often when I need a solution for a specific task I do a google search to find out what command I can use. Before I made this script I had a text file with commands saved that I wanted to rember. This script makes it easier to fetch and organize my favourite commands.}
   gem.homepage      = "https://github.com/nilseriksson/Mycommands"
 
   gem.files         = `git ls-files`.split($/)

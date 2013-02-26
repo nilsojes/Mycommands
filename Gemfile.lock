@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mycommands (1.0.4)
+    mycommands (1.0.5)
       bundler (~> 1.3.0)
       clipboard (~> 1.0.1)
 

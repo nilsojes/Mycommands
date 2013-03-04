@@ -7,11 +7,5 @@ module Mycommands
   DEBUG = ARGV.include? '-d'
   TEST = ARGV.include? '-t'
 
-  action = :print_version if ARGV.include?('-v')
-
-  action = :sort_yaml_files if ARGV.include?('-s')
-
-  action ||= :run
-
-  Factory::get(:Application).send(action)
+  Factory::get(:Application).run
 end

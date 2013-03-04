@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/mycommands'
-
 module Mycommands
 
   DEBUG = ARGV.include? '-d'
   TEST = ARGV.include? '-t'
+
+  require_relative '../lib/mycommands'
 
   Factory::get(:Application).run
 end

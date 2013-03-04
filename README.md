@@ -37,6 +37,7 @@ About the yml files
 
 If the script finds categories.yml or commands.yml in ~/Mycommands
 those files will be used instead of the default ones.
+You can run "mycommands --copy" to copy the default ones to ~/Mycommands.
 
 Categories in categories.yml that has no subcategories has to end with a trailing blank space.
 
